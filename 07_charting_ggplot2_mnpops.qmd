@@ -20,7 +20,7 @@ library(ggthemes)
 library(esquisse)
 
 #import data
-county_pop <-  read_xlsx('county_pop.xlsx') %>% 
+county_pop <-  read_xlsx('data/county_pop.xlsx') %>% 
   clean_names()
 
 
@@ -47,7 +47,8 @@ metro_pop
 
 # Basics of ggplot2
 
-Basic column/bar chart
+Basic column/bar chart - Pay attention to the + that MUST be added to work 
+Aes -> aesthetic 
 ```{r}
 
 ggplot(metro_pop, aes(x = geography, y = pop_estimate2016)) +
@@ -55,7 +56,7 @@ ggplot(metro_pop, aes(x = geography, y = pop_estimate2016)) +
 
 ```
 
-Convert to horizontal lines
+Convert to horizontal lines -> model web design -> more aesthetic 
 ```{r}
 
 ggplot(metro_pop, aes(x = geography, y = pop_estimate2016)) +
@@ -67,6 +68,9 @@ ggplot(metro_pop, aes(x = geography, y = pop_estimate2016)) +
 
 Sorting by values and changing colors.  
 Color is for the outline; fill is inside the bars.
+Reorder the order of geography based on the pop estimate - that creates a more
+logical order 
+You could also not have any outline at all, only the fill 
 
 ```{r}
 
@@ -77,6 +81,7 @@ ggplot(metro_pop, aes(x = reorder(geography, pop_estimate2016), y = pop_estimate
 ```
 
 Use colorbrewer2.org to get better colors
+The codes are hex values 
 ```{r}
 
 ggplot(metro_pop, aes(x = reorder(geography, pop_estimate2016), y = pop_estimate2016)) + 
@@ -89,7 +94,7 @@ improve the axis titles and labels
 https://ggplot2.tidyverse.org/reference/scale_continuous.html
 note: the Y axis is along the bottom because this is flipped
 
-we'll use the scales package here for the comma function
+we'll use the scales package here for the comma function - to put in the numbers
 ```{r}
 
 ggplot(metro_pop, aes(x = reorder(geography, pop_estimate2016), y = pop_estimate2016)) + 

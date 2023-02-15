@@ -26,6 +26,8 @@ library(nycflights13)
 
 One of the most powerful things we can do when exploring analysis in R is to aggregate our data using `group_by()` and `summarise()`. This works kind of like pivot tables in Excel...only with significantly more power.
 
+Group_by means put them in certain boxes based on characteristics 
+
 First, let's load the New York to Sarasota flight data we saved in the last script. In this case, let's grab our Excel file and use a function from the `readxl` package to import it.
 
 Let's also walk through the visual wizard available in RStudio for importing csv and Excel files.
@@ -156,12 +158,13 @@ That's because by default, R doesn't handle blank entries well for averaging - i
 
 So we can easily handle that by adding an argument to calculate the average regardless of whether different flights have different numbers of rows.
 
+na.rm takes the values out that shows an NA in a result 
+
 ```{r}
 
 srqflights %>% 
-  filter(month == 1) %>% 
-  group_by(carrier, flight, origin) %>% 
-  summarise(avg_delay = mean(dep_delay, na.rm = TRUE))
+  group_by(month,carrier, flight, origin) %>% 
+  summarise(avg_delay = mean(dep_delay, na.rm = TRUE), flight_count=n())
 
 ```
 
@@ -213,35 +216,59 @@ We now have a lot more information at our fingertips than we did a few minutes a
 ## More Practice Together
 
 ```{r}
+flights <- nycflights13::flights
 
 
+```
+
+Average departure time of flights flyinf from JFK and their respective carriers 
+
+```{r}
+
+new_thing <-flights %>% 
+  filter(origin == 'JFK') %>% 
+  group_by(origin,carrier) %>% 
+  summarise(av_depart_time = mean(sched_dep_time)) %>% 
+  mutate(combined = paste0(origin,carrier))
+
+  
+
+```
+
+Flights from LGA that have a delayed time of more than 30min 
+
+```{r}
+flights %>% 
+  filter(origin == 'LGA') %>% 
+  group_by(origin,carrier) %>% 
+  summarise(dep_delay>= 30)
+
+
+```
+
+Creating a new column with 'mutate'
+If else function similar to excel function 
+Janitor:round_half_up 
+Or multiply it by 100 to avoid decimals 
+
+```{r}
+flights %>% 
+  mutate(is_delay = if_else(dep_delay>0, "YES", "NO"))
 
 ```
 
 
 ```{r}
 
-
-
-```
-
-
-```{r}
-
-
-
-```
-
-
-```{r}
-
-
-
-```
-
-
-```{r}
-
+  ggplot(new_thing, aes(x = reorder(combined, av_depart_time), y = av_depart_time) + 
+    geom_col(color = "#9ebcda", fill = "#9ebcda") +
+    coord_flip()+
+    scale_y_continuous(name = "Average Dep. Time JFK") +
+    scale_x_discrete(name = "Origin_Carrier") +
+    labs(title = "Average Dep. Time JFK and Respective Carriers", 
+       subtitle = "2022",
+       caption = "Boeing Data 2022") +
+    theme_fivethirtyeight()
 
 
 ```
